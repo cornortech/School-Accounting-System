@@ -1,0 +1,27 @@
+{
+  "name": "eduledger-api",
+  "version": "1.0.0",
+  "description": "EduLedger - school accounting API",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "seed:admin": "node seedSuperAdmin.js",
+    "test": "node tests/api-test.mjs",
+    "test:race": "node tests/race-test.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.0"
+  }
+}
