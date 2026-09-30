@@ -1,8 +1,8 @@
 // Full API test: schools, fees, students, payments, payroll, expenses, ledger, reports, security.
 // ⚠️ Run ONLY against a TEST database - it creates schools and records.
 //
-//   API_URL=http://localhost:5000 SUPER_ADMIN_EMAIL=... SUPER_ADMIN_PASSWORD=... node tests/api-test.mjs
-const API = (process.env.API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+//   API_URL=https://school-accounting-system-52b1.onrender.com SUPER_ADMIN_EMAIL=... SUPER_ADMIN_PASSWORD=... node tests/api-test.mjs
+const API = (process.env.API_URL || 'https://school-accounting-system-52b1.onrender.com').replace(/\/+$/, '');
 const R = Date.now().toString(36); // makes emails/codes unique so the test can run many times
 const B=API+'/api'; let pass=0, failN=0;
 const ok=(c,m)=>{ if(c){pass++;} else {failN++; console.log('❌',m);} };

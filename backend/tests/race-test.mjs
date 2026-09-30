@@ -2,8 +2,8 @@
 // Real MongoDB (Atlas) must show: 10 receipts, all numbers unique, balance = sum of receipts.
 // ⚠️ Run ONLY against a TEST database.
 //
-//   API_URL=http://localhost:5000 SUPER_ADMIN_EMAIL=... SUPER_ADMIN_PASSWORD=... node tests/race-test.mjs
-const API = (process.env.API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+//   API_URL=https://school-accounting-system-52b1.onrender.com SUPER_ADMIN_EMAIL=... SUPER_ADMIN_PASSWORD=... node tests/race-test.mjs
+const API = (process.env.API_URL || 'https://school-accounting-system-52b1.onrender.com').replace(/\/+$/, '');
 const R = Date.now().toString(36);
 const call = async (m, p, t, b) => {
   const r = await fetch(API + '/api' + p, { method: m, headers: { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }, body: b ? JSON.stringify(b) : undefined });

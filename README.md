@@ -87,7 +87,7 @@ Start the backend:
 npm run dev
 ```
 
-You should see `EduLedger API running on port 5000`. Check <http://localhost:5000/health>.
+You should see `EduLedger API running on port 5000`. Check <https://school-accounting-system-52b1.onrender.com/health>.
 
 ### 2. Create the super admin (once)
 
@@ -117,7 +117,7 @@ npm install
 Copy `.env.example` to `.env`:
 
 ```env
-VITE_API_URL=http://localhost:5000
+VITE_API_URL=https://school-accounting-system-52b1.onrender.com
 ```
 
 Then run:
