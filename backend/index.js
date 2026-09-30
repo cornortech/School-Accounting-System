@@ -15,7 +15,7 @@ app.disable("x-powered-by");
 app.use(helmet());
 
 // Only our own websites may call the API from a browser (ALLOWED_ORIGINS in .env)
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:5173")
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "https://school-accounting-system-phi.vercel.app/")
   .split(",")
   .map((o) => o.trim().replace(/\/+$/, ""))
   .filter(Boolean);

@@ -72,7 +72,7 @@ Copy `.env.example` to `.env` and fill it in:
 ```env
 MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/eduledger
 JWT_SECRET=<long random text>
-ALLOWED_ORIGINS=http://localhost:5173
+ALLOWED_ORIGINS=https://school-accounting-system-phi.vercel.app/
 ```
 
 Make a `JWT_SECRET` with:
@@ -126,7 +126,7 @@ Then run:
 npm run dev
 ```
 
-Open <http://localhost:5173> and log in as the super admin. Create a school: this also creates the school admin's login. The school admin can then add fees, students and staff.
+Open <https://school-accounting-system-phi.vercel.app/> and log in as the super admin. Create a school: this also creates the school admin's login. The school admin can then add fees, students and staff.
 
 ---
 
