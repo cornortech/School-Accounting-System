@@ -47,6 +47,9 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
   message: { success: false, message: "Too many failed attempts. Please wait 15 minutes and try again." },
 });
+
+// Fingerprint machines send their scans here (no login - they are checked by serial number)
+app.use("/iclock", require("./routes/iclock"));
 app.use("/api/auth/login", loginLimiter);
 app.use("/api/auth", require("./routes/auth"));
 
@@ -65,6 +68,8 @@ const schoolRoutes = {
   ledger: require("./routes/ledger"),
   reports: require("./routes/reports"),
     users: require("./routes/users"),
+      attendance: require("./routes/attendance"),
+  device: require("./routes/devices"),
 };
 for (const [path, router] of Object.entries(schoolRoutes)) {
   app.use(`/api/${path}`, needSchool, router);

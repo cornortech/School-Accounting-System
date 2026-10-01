@@ -20,10 +20,14 @@ const staffSchema = new mongoose.Schema(
     deductions: { type: Number, default: 0, min: 0 },
     netSalary: { type: Number, required: true, min: 0 },
     status: { type: String, enum: ["active", "on_leave", "terminated"], default: "active" },
+        // Fingerprint machine link. Only the ID number is stored here - fingerprints stay inside the machine.
+    deviceUserId: { type: String, default: "" }, // the user ID typed into the machine, e.g. "101"
+    fingerprintDeviceId: { type: String, default: "" }, // empty = any machine of this school
   },
   { timestamps: true }
 );
 
 staffSchema.index({ schoolId: 1, staffId: 1 }, { unique: true });
+staffSchema.index({ schoolId: 1, deviceUserId: 1 });
 
 module.exports = mongoose.model("Staff", staffSchema);

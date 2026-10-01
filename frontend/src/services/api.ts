@@ -152,6 +152,32 @@ export const api = {
     getPayslip: (payrollId: string) => request(`/salary/${payrollId}/payslip`),
   },
 
+  // Attendance (fingerprint)
+  attendance: {
+    getDay: (date?: string) => request(`/attendance${date ? `?date=${date}` : ''}`),
+    getReport: (from: string, to: string) => request(`/attendance/report?from=${from}&to=${to}`),
+    getHistory: (staffId: string, from: string, to: string) => request(`/attendance/${staffId}?from=${from}&to=${to}`),
+    getSettings: () => request('/attendance/settings'),
+    saveSettings: (data: any) => request('/attendance/settings', { method: 'PUT', body: JSON.stringify(data) }),
+    addManual: (data: { staffId: string; date: string; time: string; note?: string }) =>
+      request('/attendance/manual', { method: 'POST', body: JSON.stringify(data) }),
+  },
+
+  // Fingerprint machines (School Admin only)
+  devices: {
+    getAll: () => request('/device'),
+    register: (data: { name: string; serialNumber: string; location?: string }) =>
+      request('/device/connect', { method: 'POST', body: JSON.stringify(data) }),
+    update: (deviceId: string, data: any) => request(`/device/${deviceId}`, { method: 'PUT', body: JSON.stringify(data) }),
+    remove: (deviceId: string) => request(`/device/${deviceId}`, { method: 'DELETE' }),
+    getLogs: (params?: { deviceId?: string; date?: string; unlinked?: string }) => {
+      const q = new URLSearchParams((params || {}) as any).toString();
+      return request(`/device/logs${q ? `?${q}` : ''}`);
+    },
+    deleteLog: (id: string) => request(`/device/logs/${id}`, { method: 'DELETE' }),
+    sync: (deviceId?: string) => request('/device/sync', { method: 'POST', body: JSON.stringify({ deviceId }) }),
+  },
+
     // User accounts of the current school (School Admin only)
   users: {
     getAll: () => request('/users'),

@@ -15,6 +15,7 @@ import { ExpensesPage } from './pages/ExpensesPage.tsx';
 import { LedgerPage } from './pages/LedgerPage.tsx';
 import { ReportsPage } from './pages/ReportsPage.tsx';
 import { UsersPage } from './pages/UsersPage.tsx';
+import { AttendancePage } from './pages/AttendancePage.tsx';
 
 const AppContent: React.FC = () => {
   const { user, isLoading, activeTab } = useAuth();
@@ -69,6 +70,8 @@ const AppContent: React.FC = () => {
         return <ReportsPage />;
               case 'users':
         return <UsersPage />;
+              case 'attendance':
+        return <AttendancePage />;
       default:
         return user.role === 'super_admin' ? <SuperAdminDashboard /> : <SchoolAdminDashboard />;
     }

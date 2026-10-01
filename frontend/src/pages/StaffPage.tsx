@@ -36,7 +36,8 @@ export const StaffPage: React.FC = () => {
     teachingSubject: 'Science Teacher',
     nonTeachingRole: 'Accountant',
         joiningDate: new Date().toISOString().split('T')[0],
-    salaryStartDate: new Date().toISOString().split('T')[0],
+       salaryStartDate: new Date().toISOString().split('T')[0],
+    deviceUserId: '',
     baseSalary: '',
     allowances: '0',
     deductions: '0',
@@ -84,7 +85,8 @@ export const StaffPage: React.FC = () => {
           teachingSubject: 'Science Teacher',
           nonTeachingRole: 'Accountant',
           joiningDate: new Date().toISOString().split('T')[0],
-          salaryStartDate: new Date().toISOString().split('T')[0],
+                    salaryStartDate: new Date().toISOString().split('T')[0],
+          deviceUserId: '',
           baseSalary: '',
           allowances: '0',
           deductions: '0',
@@ -139,6 +141,7 @@ export const StaffPage: React.FC = () => {
       nonTeachingRole: staff.nonTeachingRole || 'Accountant',
       joiningDate: staff.joiningDate,
       salaryStartDate: staff.salaryStartDate || staff.joiningDate,
+            deviceUserId: staff.deviceUserId || '',
       baseSalary: String(staff.baseSalary),
       allowances: String(staff.allowances),
       deductions: String(staff.deductions),
@@ -486,6 +489,21 @@ export const StaffPage: React.FC = () => {
               />
               <p className="mt-1 text-[11px] text-slate-500">First salary is due one month after this date.</p>
             </div>
+
+            
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Fingerprint Device User ID</label>
+              <input
+                type="text"
+                value={staffForm.deviceUserId}
+                onChange={e => setStaffForm({ ...staffForm, deviceUserId: e.target.value.replace(/[^A-Za-z0-9]/g, '') })}
+                placeholder="e.g. 101"
+                maxLength={20}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg font-mono focus:ring-2 focus:ring-brand-600"
+              />
+              <p className="mt-1 text-[11px] text-slate-500">The User ID this person has on the fingerprint machine. Leave empty if not enrolled yet.</p>
+            </div>
+
           </div>
 
           {/* Salary Configuration */}
@@ -684,6 +702,20 @@ export const StaffPage: React.FC = () => {
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-600"
               />
               <p className="mt-1 text-[11px] text-slate-500">First salary is due one month after this date.</p>
+            </div>
+
+            
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Fingerprint Device User ID</label>
+              <input
+                type="text"
+                value={staffForm.deviceUserId}
+                onChange={e => setStaffForm({ ...staffForm, deviceUserId: e.target.value.replace(/[^A-Za-z0-9]/g, '') })}
+                placeholder="e.g. 101"
+                maxLength={20}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg font-mono focus:ring-2 focus:ring-brand-600"
+              />
+              <p className="mt-1 text-[11px] text-slate-500">The User ID this person has on the fingerprint machine. Leave empty if not enrolled yet.</p>
             </div>
 
             <div>

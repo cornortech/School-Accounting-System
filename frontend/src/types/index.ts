@@ -133,7 +133,9 @@ export interface Staff {
   teachingSubject?: string;
   nonTeachingRole?: string;
    joiningDate: string;
-  salaryStartDate?: string;
+   salaryStartDate?: string;
+  deviceUserId?: string;
+  fingerprintDeviceId?: string;
   baseSalary: number;
   allowances: number;
   deductions: number;

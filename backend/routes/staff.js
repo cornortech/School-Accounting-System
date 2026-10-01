@@ -6,12 +6,40 @@ const { allowRoles } = require("../middleware/auth");
 const { nextNumber, pad } = require("../utils/counter");
 const { toAmount, round2, sum } = require("../utils/money");
 const { str, email, escapeRegex, plain, fail, dateOr, isDate } = require("../utils/helpers");
+const AttendanceDevice = require("../models/AttendanceDevice");
+const { linkUnmatchedLogs } = require("../services/attendanceService");
 
 const router = express.Router();
 const ROLE_TYPES = ["teaching", "non_teaching"];
 const STATUSES = ["active", "on_leave", "terminated"];
 
 const netOf = (s) => round2(Math.max(0, s.baseSalary + s.allowances - s.deductions));
+
+// Checks the fingerprint fields. Returns an error message, or null when everything is fine.
+async function checkFingerprintFields(schoolId, b, currentStaffId) {
+  if (b.deviceUserId !== undefined && b.deviceUserId !== "") {
+    const id = String(b.deviceUserId).trim();
+    if (!/^[A-Za-z0-9]{1,20}$/.test(id)) return "Device User ID can only have letters and numbers (for example 101).";
+    const filter = { schoolId, deviceUserId: id };
+    if (currentStaffId) filter.staffId = mongoose.trusted({ $ne: currentStaffId });
+    const other = await Staff.findOne(filter).select("fullName").lean();
+    if (other) return `Device User ID ${id} is already used by ${other.fullName}.`;
+  }
+  if (b.fingerprintDeviceId && !(await AttendanceDevice.exists({ schoolId, deviceId: String(b.fingerprintDeviceId) }))) {
+    return "The selected fingerprint device was not found.";
+  }
+  return null;
+}
+
+// Attach scans that arrived before this person was linked. Never stops the staff save.
+async function linkScansSafely(schoolId, staff) {
+  try {
+    return await linkUnmatchedLogs(schoolId, staff);
+  } catch (err) {
+    console.error("[attendance] linking earlier scans failed:", err.message);
+    return 0;
+  }
+}
 
 // GET /api/staff
 router.get("/", async (req, res) => {
@@ -63,6 +91,9 @@ router.post("/", allowRoles("super_admin", "school_admin"), async (req, res) => 
     return fail(res, 400, "Full name, role type, designation and base salary are required.");
   }
 
+  const fpProblem = await checkFingerprintFields(schoolId, b);
+  if (fpProblem) return fail(res, 400, fpProblem);
+
   const teaching = b.roleType === "teaching";
   const n = await nextNumber(`${schoolId}:staff`);
   const staff = await Staff.create({
@@ -78,12 +109,19 @@ router.post("/", allowRoles("super_admin", "school_admin"), async (req, res) => 
     teachingSubject: teaching ? str(b.teachingSubject, 60) : undefined,
     nonTeachingRole: teaching ? undefined : str(b.nonTeachingRole, 60),
     joiningDate: dateOr(b.joiningDate),
-        salaryStartDate: isDate(b.salaryStartDate) ? b.salaryStartDate : dateOr(b.joiningDate),
+    salaryStartDate: isDate(b.salaryStartDate) ? b.salaryStartDate : dateOr(b.joiningDate),
     ...salary,
     netSalary: netOf(salary),
+    deviceUserId: str(b.deviceUserId, 20),
+    fingerprintDeviceId: str(b.fingerprintDeviceId, 40),
   });
 
-  res.status(201).json({ success: true, message: `${fullName} added (${staff.staffId}).`, staff: plain(staff) });
+  const linked = await linkScansSafely(schoolId, staff);
+  res.status(201).json({
+    success: true,
+    message: `${fullName} added (${staff.staffId}).${linked ? ` ${linked} earlier fingerprint scan(s) linked.` : ""}`,
+    staff: plain(staff),
+  });
 });
 
 // PUT /api/staff/:staffId
@@ -99,14 +137,24 @@ router.put("/:staffId", allowRoles("super_admin", "school_admin"), async (req, r
   if (ROLE_TYPES.includes(b.roleType)) staff.roleType = b.roleType;
   if (STATUSES.includes(b.status)) staff.status = b.status;
   if (isDate(b.joiningDate)) staff.joiningDate = b.joiningDate;
-    if (isDate(b.salaryStartDate)) staff.salaryStartDate = b.salaryStartDate;
+  if (isDate(b.salaryStartDate)) staff.salaryStartDate = b.salaryStartDate;
 
   const salary = readSalary(b, staff);
   if (!salary) return fail(res, 400, "Salary amounts must be valid numbers.");
   Object.assign(staff, salary, { netSalary: netOf(salary) });
 
+  const fpProblem = await checkFingerprintFields(req.schoolId, b, staff.staffId);
+  if (fpProblem) return fail(res, 400, fpProblem);
+  if (typeof b.deviceUserId === "string") staff.deviceUserId = str(b.deviceUserId, 20);
+  if (typeof b.fingerprintDeviceId === "string") staff.fingerprintDeviceId = str(b.fingerprintDeviceId, 40);
+
   await staff.save();
-  res.json({ success: true, message: `${staff.fullName} updated.`, staff: plain(staff) });
+  const linked = await linkScansSafely(req.schoolId, staff);
+  res.json({
+    success: true,
+    message: `${staff.fullName} updated.${linked ? ` ${linked} earlier fingerprint scan(s) linked.` : ""}`,
+    staff: plain(staff),
+  });
 });
 
 // DELETE /api/staff/:staffId
