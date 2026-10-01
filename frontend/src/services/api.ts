@@ -27,10 +27,16 @@ async function request<T = any>(endpoint: string, options: RequestInit = {}): Pr
     headers['x-school-id'] = activeSchoolId;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
+    let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    // The server did not answer at all (asleep, restarting, or no internet)
+    throw new Error("Can't reach the server. It may be starting up - please wait a minute and try again.");
+  }
 
   const data = await response.json().catch(() => ({}));
 
