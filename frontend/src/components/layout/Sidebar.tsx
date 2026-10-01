@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext.tsx';
-import { LayoutDashboard, GraduationCap, CreditCard, ReceiptText, Users, Wallet, TrendingDown, BookOpen, FileSpreadsheet, Building2, ShieldCheck, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, CreditCard, ReceiptText, Users, Wallet, TrendingDown, BookOpen, FileSpreadsheet, Building2, ShieldCheck, ChevronRight, UserCog }from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const { user, activeTab, setActiveTab, activeSchool } = useAuth();
@@ -77,7 +77,13 @@ export const Sidebar: React.FC = () => {
       id: 'reports',
       label: 'Financial Reports',
       icon: <FileSpreadsheet className="w-4 h-4" />,
-      roles: ['school_admin', 'accountant'],
+            roles: ['school_admin', 'accountant'],
+    },
+    {
+      id: 'users',
+      label: 'User Accounts',
+      icon: <UserCog className="w-4 h-4" />,
+      roles: ['school_admin'],
     },
   ];
 

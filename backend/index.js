@@ -64,6 +64,7 @@ const schoolRoutes = {
   expenses: require("./routes/expenses"),
   ledger: require("./routes/ledger"),
   reports: require("./routes/reports"),
+    users: require("./routes/users"),
 };
 for (const [path, router] of Object.entries(schoolRoutes)) {
   app.use(`/api/${path}`, needSchool, router);

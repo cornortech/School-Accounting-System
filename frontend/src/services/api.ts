@@ -146,6 +146,20 @@ export const api = {
     getPayslip: (payrollId: string) => request(`/salary/${payrollId}/payslip`),
   },
 
+    // User accounts of the current school (School Admin only)
+  users: {
+    getAll: () => request('/users'),
+    create: (data: { name: string; email: string; password: string; role: string }) =>
+      request('/users', { method: 'POST', body: JSON.stringify(data) }),
+    update: (userId: string, data: { name: string; email: string; role: string }) =>
+      request(`/users/${userId}`, { method: 'PUT', body: JSON.stringify(data) }),
+    setStatus: (userId: string, status: 'active' | 'inactive') =>
+      request(`/users/${userId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+    resetPassword: (userId: string, newPassword: string) =>
+      request(`/users/${userId}/reset-password`, { method: 'PATCH', body: JSON.stringify({ newPassword }) }),
+    remove: (userId: string) => request(`/users/${userId}`, { method: 'DELETE' }),
+  },
+
   // Expenses
   expenses: {
     getAll: (params?: { category?: string; search?: string; startDate?: string; endDate?: string; year?: number }) => {
